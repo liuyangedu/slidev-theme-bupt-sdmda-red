@@ -1,0 +1,32 @@
+{
+  "name": "slidev-theme-bupt-sdmda-red",
+  "version": "0.1.0",
+  "description": "A configurable Slidev theme for BUPT course presentations.",
+  "type": "module",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liuyangedu/slidev-theme-bupt-sdmda-red.git"
+  },
+  "homepage": "https://github.com/liuyangedu/slidev-theme-bupt-sdmda-red#readme",
+  "bugs": {
+    "url": "https://github.com/liuyangedu/slidev-theme-bupt-sdmda-red/issues"
+  },
+  "keywords": [
+    "slidev",
+    "slidev-theme",
+    "bupt"
+  ],
+  "engines": {
+    "slidev": ">=52.18.0"
+  },
+  "slidev": {
+    "colorSchema": "light",
+    "highlighter": "shiki",
+    "defaults": {
+      "aspectRatio": "16/9",
+      "canvasWidth": 980,
+      "transition": "fade"
+    }
+  }
+}

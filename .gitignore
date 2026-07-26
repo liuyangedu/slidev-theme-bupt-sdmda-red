@@ -1,0 +1,23 @@
+# Dependencies and generated caches
+node_modules/
+.slidev/
+.vite/
+
+# Build and test output
+dist/
+coverage/
+.codex-*/
+
+# Local configuration and logs
+*.local
+*.log
+.env
+.env.*
+!.env.example
+
+# Editor and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
