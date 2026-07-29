@@ -10,9 +10,9 @@ comark: true
 lineNumbers: false
 transition: fade
 themeConfig:
-  surfaceEffect: plain
+  surfaceEffect: glass
   sections: [基础 Markdown, 公式与媒体, 代码能力, 图表与组件, 动画与布局, 主题扩展]
-  overlayOpacity: 0.9
+  overlayOpacity: 0.45
   statusGlassBackground: '#3c3a37'
 ---
 
@@ -78,6 +78,11 @@ layout: default
   <summary>点击展开 details 内容</summary>
   HTML 元素内部也可以承载补充说明。
 </details>
+
+---
+layout: toc
+activeSection: 2
+---
 
 ---
 layout: default

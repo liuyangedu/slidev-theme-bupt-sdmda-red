@@ -7,7 +7,7 @@ const props = withDefaults(defineProps<BuptThemeProps>(), {
   showDate: undefined,
   showPageNumber: undefined,
 })
-const { theme, cssVars, chapterState } = useBuptTheme(props)
+const { theme, cssVars, chapterState, sectionTargets, goToSection } = useBuptTheme(props)
 
 const displayTitle = computed(() => props.title ?? theme.value.tocTitle)
 const sectionNumbers = ['一', '二', '三', '四', '五', '六']
@@ -44,10 +44,23 @@ const sectionNumbers = ['一', '二', '三', '四', '五', '六']
             v-for="(item, index) in theme.sections"
             :key="`${index}-${item}`"
             :class="`is-${chapterState(index)}`"
-            :aria-current="chapterState(index) === 'current' ? 'step' : undefined"
           >
-            <span class="bupt2024-toc__number">{{ sectionNumbers[index] }}、</span>
-            <span>{{ item }}</span>
+            <button
+              type="button"
+              :disabled="sectionTargets[index] === undefined"
+              :title="sectionTargets[index] === undefined
+                ? `${item}：未指定起始页`
+                : `${item}：跳转到第 ${sectionTargets[index]} 页`"
+              :aria-label="sectionTargets[index] === undefined
+                ? `第 ${index + 1} 章：${item}，未指定起始页`
+                : `跳转到第 ${index + 1} 章：${item}，第 ${sectionTargets[index]} 页`"
+              :aria-current="chapterState(index) === 'current' ? 'step' : undefined"
+              @mousedown.stop
+              @click.stop="goToSection(index)"
+            >
+              <span class="bupt2024-toc__number">{{ sectionNumbers[index] }}、</span>
+              <span>{{ item }}</span>
+            </button>
           </li>
         </ol>
         <div class="bupt2024-toc__extra"><slot /></div>

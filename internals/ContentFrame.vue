@@ -10,17 +10,10 @@ const props = withDefaults(defineProps<{
   layoutClass: '',
 })
 
-const { theme, cssVars, chapterState, sectionTargets } = useBuptTheme(props.themeProps)
-const { $page, $nav } = useSlideContext()
+const { theme, cssVars, chapterState, sectionTargets, goToSection, sectionProgress } = useBuptTheme(props.themeProps)
+const { $page } = useSlideContext()
 const sectionNumbers = ['一', '二', '三', '四', '五', '六']
 const displayPageNumber = computed(() => String(unref($page)).padStart(2, '0'))
-
-async function goToSection(index: number) {
-  const target = sectionTargets.value[index]
-  const nav = unref($nav)
-  if (target !== undefined && nav?.go)
-    await nav.go(target)
-}
 </script>
 
 <template>
@@ -44,9 +37,12 @@ async function goToSection(index: number) {
       </main>
     </div>
 
-    <nav class="bupt2024-side-nav" aria-label="章节导航">
-      <img class="bupt2024-side-logo" :src="theme.sideLogo" :alt="theme.sideLogoAlt">
-      <ol class="bupt2024-side-chapters">
+    <nav class="bupt2024-top-nav" aria-label="章节导航">
+      <img class="bupt2024-top-logo" :src="theme.navLogo" :alt="theme.navLogoAlt">
+      <ol
+        class="bupt2024-top-chapters"
+        :style="{ gridTemplateColumns: `repeat(${Math.max(theme.sections.length, 1)}, minmax(0, 1fr))` }"
+      >
         <li
           v-for="(item, index) in theme.sections"
           :key="`${index}-${item}`"
@@ -65,16 +61,20 @@ async function goToSection(index: number) {
             @mousedown.stop
             @click.stop="goToSection(index)"
           >
-            {{ sectionNumbers[index] }}
+            <span
+              v-if="chapterState(index) === 'current'"
+              class="bupt2024-top-chapters__progress"
+              :style="{ width: `${sectionProgress * 100}%` }"
+              aria-hidden="true"
+            />
+            <span class="bupt2024-top-chapters__number">{{ sectionNumbers[index] }}</span>
+            <span class="bupt2024-top-chapters__title">{{ item }}</span>
           </button>
         </li>
       </ol>
     </nav>
 
     <footer class="bupt2024-status-bar">
-      <div class="bupt2024-status-bar__deck">{{ theme.footerTitle }}</div>
-      <div class="bupt2024-status-bar__section">{{ theme.section }}</div>
-      <div class="bupt2024-status-bar__date">{{ theme.showDate ? theme.date : '' }}</div>
       <div class="bupt2024-status-bar__page">
         <span v-if="theme.showPageNumber">{{ displayPageNumber }}</span>
       </div>

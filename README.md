@@ -117,7 +117,7 @@ date: 2026.07.26
 
 ### 目录
 
-目录和左侧导航都由 `sections` 生成。当前章节由 `activeSection` 或 `section` 明确指定，主题不会自动判断演示进度。
+目录和内容页顶部导航都由 `sections` 生成。当前章节由 `activeSection` 或 `section` 明确指定，主题不会自动判断演示进度。
 
 ```yaml
 ---
@@ -127,6 +127,8 @@ activeSection: 3
 ```
 
 目录页使用 `tocTitle`、`sections`、`activeSection`、`tocPanelWidth` 和 `tocItemSize` 控制内容与尺寸；`tocListTop`、`tocListBottom` 和 `tocListMinWidth` 控制独立章节列表区域。`tocPanelTop`、`tocPanelHeight`、`tocFrameTopInset` 和 `tocFrameBottomInset` 可以调整梯形面板及两侧红线的位置。白色面板与其他布局共用表面材质参数。章节序号由主题自动显示为“一、”至“六、”。
+
+目录中每个章节都是可点击按钮，与内容页顶部导航共用同一个 `sectionTargets` 和 `goToSection()`，因此跳转目标与路由行为完全一致。若某章没有任何页面显式设置有效的 `section` 或 `activeSection`，该目录项仍会显示，但不可点击。
 
 ### 内容页
 
@@ -150,9 +152,11 @@ activeSection: 3
 
 如果当前页同时设置两个参数，能够匹配 `sections` 的 `section` 优先。当前页如果两个参数都没写，主题会向前查找最近一页明确设置的章节并自动继承；封面、目录或其他未设置章节的页面不会打断继承。直接跳页、演讲者模式和导出时也按幻灯片顺序计算，不依赖实际播放历史。若此前没有任何页面设置章节，则使用全局 `themeConfig` 中的值，最后回退到主题默认值 `1`。
 
-左侧导航自动显示中文数字“一”至“六”，已讲、当前和未讲章节与目录页使用同一套状态层级。数字位于 `sideNavRangeTop` 到 `sideNavRangeBottom` 之间，并在该范围内均匀分布；默认上下范围相同，因此整组数字的垂直中点与页面中点一致。字号和按钮尺寸也可以单独调整。
+顶部导航最左侧显示 Logo，右侧是固定总宽度、整体居中的章节区域。章节在该区域内均匀排列：当前章节使用白色背景，同时显示中文数字和章节名；其他章节只显示“一”至“六”的中文数字。`topNavRangeWidth` 和 `topNavRangeCenterX` 分别调整这个区域的总宽度和水平中心。
 
-每个数字都是可点击按钮。主题会查找该章节第一次显式设置有效 `section` 或 `activeSection` 的页面，并调用 Slidev 原生导航跳转；这在普通播放、演讲者模式和路由模式下都会保持正确路径。若某章从未显式指定起始页，对应数字仍会显示，但按钮不可点击。底栏第二段固定显示解析后的当前章节标题。主题最多显示六章。
+当前章节标签同时显示页面进度填充：该章第一张显示顶部导航的内容页为 0%，下一章开始前的最后一张内容页为 100%，中间按实际内容页数线性计算。`cover`、`toc` 和 `end` 不消耗章节进度。章节起点仍以每章第一次显式设置的 `section` 或 `activeSection` 为准；若某章只有一张内容页，该页直接显示 100%。可用 `topNavProgressColor` 覆盖填充色。
+
+每个数字都是可点击按钮。主题会查找该章节第一次显式设置有效 `section` 或 `activeSection` 的页面，并调用 Slidev 原生导航跳转；这在普通播放、演讲者模式和路由模式下都会保持正确路径。若某章从未显式指定起始页，对应数字仍会显示，但按钮不可点击。主题最多显示六章。
 
 ```yaml
 ---
@@ -171,11 +175,11 @@ layout: default
 
 基本内容页直接承载 Markdown，已提供一级至六级标题、段落、粗体、斜体、删除线、链接、引用、有序/无序/任务列表、行内代码、代码块、表格和 Slidev 原生 LaTeX 的默认排版。一级标题作为页面主标题，二至六级标题使用统一的深色文字，通过逐级递减的字号、字重和间距建立层级。
 
-四段底栏使用统一的灰色背景与文字颜色：第一段显示演示标题，第二段显示当前章节标题，第三段显示日期，第四段显示补零后的两位 Slidev 实际页码（例如 `04`）。底栏的间距、字号、字色、底色和列宽均可在全局或单页覆盖。
+内容页底部只保留补零后的两位 Slidev 实际页码（例如 `04`）。页码无色块背景，右下位置、字号和字色均可在全局或单页覆盖。
 
 ### 双栏内容页
 
-当整页内容需要左右并列时，使用 `two-cols`。它与 `default` 共用背景、表面材质、左侧章节导航、Markdown 样式和底部状态栏，只把正文区域改为两个命名插槽：
+当整页内容需要左右并列时，使用 `two-cols`。它与 `default` 共用背景、表面材质、顶部章节导航、Markdown 样式和右下页码，只把正文区域改为两个命名插槽：
 
 ```markdown
 ---
@@ -262,13 +266,37 @@ layout: end
 
 结束页默认不生成任何中间文字。可以通过 `title` / `endTitle` 显式添加标题，也可以直接在 Markdown 中写文字或嵌入 HTML；这些内容默认居中显示。顶部弧线可通过 `endCurveCenterX`、`endCurveCenterY`、`endCurveRadiusX` 和 `endCurveRadiusY` 调整，遮罩会同步跟随。
 
+## 开发者源码索引
+
+README 中的参数表面向主题使用者；需要检查参数类型、默认值或实际渲染方式时，以以下源码为准（行号对应当前 `dev` 版本）：
+
+| 内容 | 源码位置 |
+| --- | --- |
+| 所有公开主题参数及 TypeScript 类型 | [`utils/theme.ts` 第 5–130 行](utils/theme.ts#L5-L130) 的 `BuptThemeProps` |
+| frontmatter、`themeConfig` 与默认值的优先级 | [`utils/theme.ts` 第 151–162 行](utils/theme.ts#L151-L162) 的 `themeConfig` / `resolve()` |
+| 参数默认值和规范化逻辑 | [`utils/theme.ts` 第 164–351 行](utils/theme.ts#L164-L351) 的 `theme` computed |
+| 顶部导航与页码默认值 | [`utils/theme.ts` 第 306–322 行](utils/theme.ts#L306-L322) |
+| 参数到 CSS 自定义属性的映射 | [`utils/theme.ts` 第 353–447 行](utils/theme.ts#L353-L447) 的 `cssVars` computed |
+| 章节状态、点击跳转目标与进度算法 | [`utils/theme.ts` 第 449–541 行](utils/theme.ts#L449-L541) |
+| 顶部导航和页码的 Vue 结构 | [`internals/ContentFrame.vue` 第 13、40–81 行](internals/ContentFrame.vue#L40-L81) |
+| 目录页点击跳转结构 | [`layouts/toc.vue` 第 10、40–65 行](layouts/toc.vue#L40-L65) |
+| 目录列表按钮 CSS | [`styles/layouts.css` 第 240–312 行](styles/layouts.css#L240-L312) |
+| 顶部导航、进度填充和页码 CSS | [`styles/layouts.css` 第 541–706 行](styles/layouts.css#L541-L706) |
+| 内置背景图与 Logo 的文件映射 | [`utils/assets.ts` 第 1–9 行](utils/assets.ts#L1-L9) |
+
+新增一个主题参数时，通常需要同步修改三个位置：先在 `BuptThemeProps` 声明类型，再在 `theme` computed 中提供默认值，最后在需要 CSS 使用时写入 `cssVars`。如果参数会影响用户写法，也应同步更新本节下面的参数表。
+
+### 从“竖版导航v1”迁移
+
+Git 标签 `竖版导航v1` 保留了左侧竖向导航和四块底栏。当前横向导航版本已经删除不再生效的 `footerTitle`、`sideNavWidth`、`sideNavNumberSize`、`sideNavRangeTop`、`sideNavRangeBottom`、`sideNavItemWidth`、`sideNavItemHeight`、`statusBarGap`、`statusBarPadding`、`statusBarColumns`、`statusItemPaddingX`、`statusBackground`、`statusGlassBackground` 和 `statusGlassTextColor`。旧文稿中即使仍写着这些字段也不会影响当前布局，迁移时可以直接删掉。
+
 ## 参数参考
 
 ### 内容与状态
 
 | 参数 | 默认值 | 说明 |
 | --- | --- | --- |
-| `deckTitle` | 演示文稿顶层 `title`，否则“演示标题” | 底栏和封面标题的基础值 |
+| `deckTitle` | 演示文稿顶层 `title`，否则“演示标题” | 封面标题的基础值 |
 | `coverTitle` | `deckTitle` | 封面默认标题 |
 | `tocTitle` | `目录` | 目录页默认标题 |
 | `endTitle` | 空 | 结束页可选标题；未设置时不生成标题 |
@@ -281,47 +309,48 @@ layout: end
 | `sections` | 第一章至第四章 | 动态章节数组，最多六项 |
 | `activeSection` | 最近上一页的明确设置，否则 `1` | 从 1 开始的当前章节序号；页面未设置时自动向前继承 |
 | `section` | 最近上一页的明确设置，否则空 | 与 `sections` 完全匹配的章节名称；成功匹配时优先于 `activeSection` |
-| `footerTitle` | 当前页 `title`，否则 `deckTitle` | 底栏第一段演示标题 |
 | `showDate` | `true` | 是否显示日期 |
 | `showPageNumber` | `true` | 是否显示补零后的两位 Slidev 实际页码 |
 | `showBrand` | `true` | 是否显示封面/结束页校院标识 |
 
 ### 品牌色
 
-| 参数 | 默认值 |
-| --- | --- |
-| `primary` | `#c2272b` |
-| `primaryDeep` | `#9e1c20` |
-| `primaryWine` | `#7a1418` |
-| `primaryBright` | `#e2474b` |
-| `primaryTint` | `#f8e7e7` |
-| `primaryShadow` | `#8a181c` |
-| `onPrimary` | `#ffffff` |
-| `ink900` | `#1b1a18` |
-| `ink700` | `#3c3a37` |
-| `ink500` | `#6e6a64` |
-| `ink400` | `#938e87` |
-| `line` | `#e5dfd6` |
-| `canvas` | `#fbfaf7` |
-| `surface` | `#f3efe9` |
-| `card` | `#ffffff` |
-| `accentGold` | `#b79a5e` |
-| `accentSteel` | `#98a0a6` |
+| 参数 | 默认值 | 主要用途 |
+| --- | --- | --- |
+| `primary` | `#c2272b` | 主题主红色、表格边框和强调元素 |
+| `primaryDeep` | `#9e1c20` | 导航渐变的中间深色 |
+| `primaryWine` | `#7a1418` | 深红边框及高对比强调 |
+| `primaryBright` | `#e2474b` | 亮红强调和链接装饰 |
+| `primaryTint` | `#f8e7e7` | 浅红底色 |
+| `primaryShadow` | `#8a181c` | 导航渐变暗部和阴影基色 |
+| `onPrimary` | `#ffffff` | 主色背景上的文字 |
+| `ink900` | `#1b1a18` | 主标题和最高对比正文 |
+| `ink700` | `#3c3a37` | 常规正文和页码 |
+| `ink500` | `#6e6a64` | 次要文字 |
+| `ink400` | `#938e87` | 更弱的辅助文字 |
+| `line` | `#e5dfd6` | 普通分割线和弱边框 |
+| `canvas` | `#fbfaf7` | 当前章节白底及页面画布 |
+| `surface` | `#f3efe9` | 次级表面 |
+| `card` | `#ffffff` | Logo 卡片等纯白表面 |
+| `accentGold` | `#b79a5e` | 可选金色强调 |
+| `accentSteel` | `#98a0a6` | 可选灰蓝强调 |
 
 ### 图片与标识
 
-| 参数 | 默认值 |
-| --- | --- |
-| `coverImage` | 主题内置 `cover.png` |
-| `tocImage` | 主题内置 `toc.png` |
-| `contentImage` | 主题内置 `content.png` |
-| `endImage` | 主题内置 `end.jpg` |
-| `emblem` | 主题内置 `xh.png` |
-| `wordmark` | 主题内置 `yh1.png` |
-| `sideLogo` | 主题内置 `yh2.png` |
-| `emblemAlt` | `北京邮电大学校徽` |
-| `wordmarkAlt` | `数字媒体与设计艺术学院` |
-| `sideLogoAlt` | `数字媒体与设计艺术学院标识` |
+| 参数 | 默认值 | 说明 |
+| --- | --- | --- |
+| `coverImage` | 主题内置 `cover.png` | 封面背景图 |
+| `tocImage` | 主题内置 `toc.png` | 目录背景图 |
+| `contentImage` | 主题内置 `content.png` | `default` / `two-cols` 内容页背景图 |
+| `endImage` | 主题内置 `end.jpg` | 结束页背景图 |
+| `emblem` | 主题内置 `xh.png` | 封面和结束页校徽 |
+| `wordmark` | 主题内置 `yh1.png` | 封面和结束页学院字标 |
+| `navLogo` | 主题内置 `yh2.png` | 顶部导航最左侧 Logo |
+| `sideLogo` | 主题内置 `yh2.png` | `navLogo` 的兼容别名；仅在未设置 `navLogo` 时读取 |
+| `emblemAlt` | `北京邮电大学校徽` | 校徽替代文字 |
+| `wordmarkAlt` | `数字媒体与设计艺术学院` | 学院字标替代文字 |
+| `navLogoAlt` | `数字媒体与设计艺术学院标识` | 顶部导航 Logo 替代文字 |
+| `sideLogoAlt` | 同 `navLogoAlt` | `navLogoAlt` 的兼容别名 |
 
 自定义图片推荐放进 Slidev 项目的 `public` 目录，并使用 `/images/example.jpg` 这类路径。
 
@@ -364,42 +393,55 @@ layout: end
 | `endMaskExpansion` | `0.3%` |
 | `endBrandBottom` | `1.55cqw` |
 | `endBrandLeft` | `1.75cqw` |
-| `sideNavWidth` | `5.2cqw` |
-| `sideNavNumberSize` | `1.65cqw` |
-| `sideNavRangeTop` | `22%` |
-| `sideNavRangeBottom` | `22%` |
-| `sideNavItemWidth` | `3.4cqw` |
-| `sideNavItemHeight` | `2.6cqw` |
-| `statusBarHeight` | `3.15cqw` |
-| `statusBarGap` | `0.28cqw` |
-| `statusBarPadding` | `0.28cqw 0.28cqw 0` |
-| `statusBarColumns` | `minmax(0, 1.15fr) minmax(0, 1fr) max-content max-content` |
-| `statusItemPaddingX` | `1.05cqw` |
-| `statusTextSize` | `1.05cqw` |
-| `statusTextColor` | `ink700` |
-| `statusBackground` | `line`（`#e5dfd6`） |
-| `statusGlassBackground` | `#8a181c`，`glass` 模式下四个状态块的玻璃底色；透明度与页面蒙层共用参数，但状态块不显示高光渐变 |
-| `statusGlassTextColor` | `onPrimary`（`#ffffff`），`glass` 模式下的状态栏文字色 |
-| `contentPaddingTop` | `2.8cqw` |
-| `contentPaddingRight` | `4.8cqw` |
-| `contentPaddingBottom` | `4.25cqw` |
-| `contentPaddingLeft` | `4.8cqw` |
-| `contentMaxWidth` | `100%` |
-| `mermaidBackground` | `var(--slidev-code-background)`，Mermaid 图表容器底色，默认与代码块一致 |
-| `columnRatio` | `1fr 1fr` |
-| `columnGap` | `3cqw` |
-| `columnAlign` | `start` |
-| `columnDivider` | `false` |
-| `tocPanelWidth` | `64cqw` |
-| `tocItemSize` | `2cqw` |
-| `tocListTop` | `14cqw` |
-| `tocListBottom` | `5cqw` |
-| `tocListMinWidth` | `20cqw` |
-| `tocPanelTop` | `-1%` |
-| `tocPanelHeight` | `102%` |
-| `tocFrameTopInset` | `12%` |
-| `tocFrameBottomInset` | `0%` |
-| `tocFrameExtension` | `0.12%` |
+
+### 顶部导航
+
+| 参数 | 默认值 | 说明 |
+| --- | --- | --- |
+| `topNavHeight` | `3.6cqw` | 整条导航高度，约等于单行文字加常规上下留白 |
+| `topNavLogoLeft` | `1.2cqw` | Logo 左侧位置 |
+| `topNavLogoSize` | `2.65cqw` | Logo 的宽度和高度 |
+| `topNavRangeWidth` | `82cqw` | 章节等分区域的总宽度 |
+| `topNavRangeCenterX` | `55.5%` | 章节等分区域的水平中心 |
+| `topNavGap` | `0.65cqw` | 等分网格列间距 |
+| `topNavItemWidth` | `3.5cqw` | 非当前章节数字按钮宽度 |
+| `topNavItemHeight` | `2.35cqw` | 所有章节按钮高度 |
+| `topNavActiveWidth` | `18cqw` | 当前章节以所在等分中心向两侧展开后的宽度 |
+| `topNavTextSize` | `1.2cqw` | 章节数字和当前章节标题共用字号 |
+| `topNavTitleGap` | `0.8cqw` | 当前章节的数字与标题间距 |
+| `topNavProgressColor` | 主红色与白色混合 24% | 当前章节标签从左向右填充的进度色，接受任意 CSS 颜色 |
+
+章节列数由 `sections.length` 动态生成，不固定为六列；主题只对数组执行最多六项的截取。进度比例由主题自动计算，不需要额外参数。
+
+### 内容区、页码、双栏与目录
+
+| 参数 | 默认值 | 说明 |
+| --- | --- | --- |
+| `statusBarHeight` | `1.65cqw` | 右下页码容器高度 |
+| `statusBarRight` | `1.25cqw` | 页码距画布右侧的距离 |
+| `statusBarBottom` | `0.35cqw` | 页码距画布底部的距离 |
+| `statusTextSize` | `1.05cqw` | 页码字号 |
+| `statusTextColor` | `ink700` | 页码颜色 |
+| `contentPaddingTop` | `2.8cqw` | 内容面板内部上边距；从顶部导航下沿开始计算 |
+| `contentPaddingRight` | `4.8cqw` | 内容面板内部右边距 |
+| `contentPaddingBottom` | `4.25cqw` | 内容面板内部基础下边距 |
+| `contentPaddingLeft` | `4.8cqw` | 内容面板内部左边距 |
+| `contentMaxWidth` | `100%` | Markdown 正文最大宽度 |
+| `mermaidBackground` | `var(--slidev-code-background)` | Mermaid 容器底色，默认与代码块一致 |
+| `columnRatio` | `1fr 1fr` | `two-cols` 两栏宽度 |
+| `columnGap` | `3cqw` | `two-cols` 两栏总间距 |
+| `columnAlign` | `start` | 两栏垂直对齐 |
+| `columnDivider` | `false` | 是否显示两栏分割线 |
+| `tocPanelWidth` | `64cqw` | 目录梯形面板宽度 |
+| `tocItemSize` | `2cqw` | 目录章节字号 |
+| `tocListTop` | `14cqw` | 目录列表区域上边界 |
+| `tocListBottom` | `5cqw` | 目录列表区域下边界 |
+| `tocListMinWidth` | `20cqw` | 目录列表最小宽度 |
+| `tocPanelTop` | `-1%` | 目录面板顶部位置 |
+| `tocPanelHeight` | `102%` | 目录面板高度 |
+| `tocFrameTopInset` | `12%` | 梯形红线顶部向内缩进 |
+| `tocFrameBottomInset` | `0%` | 梯形红线底部向内缩进 |
+| `tocFrameExtension` | `0.12%` | 红线越过画布边缘的防截断补偿 |
 
 背景采用 `object-fit: cover`。对于原始 3:2 图片，默认从顶部对齐并裁掉底部超出 16:9 的部分。
 
