@@ -16,7 +16,6 @@ export interface BuptThemeProps {
   sections?: string[]
   activeSection?: number | string
   section?: string
-  footerTitle?: string
   showDate?: boolean
   showPageNumber?: boolean
   showBrand?: boolean
@@ -57,9 +56,11 @@ export interface BuptThemeProps {
   endImage?: string
   emblem?: string
   wordmark?: string
+  navLogo?: string
   sideLogo?: string
   emblemAlt?: string
   wordmarkAlt?: string
+  navLogoAlt?: string
   sideLogoAlt?: string
   coverBackgroundPosition?: string
   coverBrandTop?: string
@@ -82,22 +83,23 @@ export interface BuptThemeProps {
   endMaskExpansion?: string
   endBrandBottom?: string
   endBrandLeft?: string
-  sideNavWidth?: string
-  sideNavNumberSize?: string
-  sideNavRangeTop?: string
-  sideNavRangeBottom?: string
-  sideNavItemWidth?: string
-  sideNavItemHeight?: string
+  topNavHeight?: string
+  topNavLogoLeft?: string
+  topNavLogoSize?: string
+  topNavRangeWidth?: string
+  topNavRangeCenterX?: string
+  topNavGap?: string
+  topNavItemWidth?: string
+  topNavItemHeight?: string
+  topNavActiveWidth?: string
+  topNavTextSize?: string
+  topNavTitleGap?: string
+  topNavProgressColor?: string
   statusBarHeight?: string
-  statusBarGap?: string
-  statusBarPadding?: string
-  statusBarColumns?: string
-  statusItemPaddingX?: string
   statusTextSize?: string
   statusTextColor?: string
-  statusBackground?: string
-  statusGlassBackground?: string
-  statusGlassTextColor?: string
+  statusBarRight?: string
+  statusBarBottom?: string
   contentPaddingTop?: string
   contentPaddingRight?: string
   contentPaddingBottom?: string
@@ -236,7 +238,6 @@ export function useBuptTheme(props: Readonly<BuptThemeProps>) {
       sections,
       activeSection,
       section: sectionName || sections[activeSection - 1] || '',
-      footerTitle: resolve<string>('footerTitle', String(props.title ?? deckTitle)),
       showDate: resolve<boolean>('showDate', true),
       showPageNumber: resolve<boolean>('showPageNumber', true),
       showBrand: resolve<boolean>('showBrand', true),
@@ -277,10 +278,10 @@ export function useBuptTheme(props: Readonly<BuptThemeProps>) {
       endImage: resolve<string>('endImage', defaultAssets.endImage),
       emblem: resolve<string>('emblem', defaultAssets.emblem),
       wordmark: resolve<string>('wordmark', defaultAssets.wordmark),
-      sideLogo: resolve<string>('sideLogo', defaultAssets.sideLogo),
+      navLogo: resolve<string>('navLogo', resolve<string>('sideLogo', defaultAssets.sideLogo)),
       emblemAlt: resolve<string>('emblemAlt', '北京邮电大学校徽'),
       wordmarkAlt: resolve<string>('wordmarkAlt', '数字媒体与设计艺术学院'),
-      sideLogoAlt: resolve<string>('sideLogoAlt', '数字媒体与设计艺术学院标识'),
+      navLogoAlt: resolve<string>('navLogoAlt', resolve<string>('sideLogoAlt', '数字媒体与设计艺术学院标识')),
       coverBackgroundPosition: resolve<string>('coverBackgroundPosition', 'top center'),
       coverBrandTop: resolve<string>('coverBrandTop', '1.55cqw'),
       coverBrandRight: resolve<string>('coverBrandRight', '1.75cqw'),
@@ -302,22 +303,23 @@ export function useBuptTheme(props: Readonly<BuptThemeProps>) {
       endMaskExpansion: resolve<string>('endMaskExpansion', '0.3%'),
       endBrandBottom: resolve<string>('endBrandBottom', '1.55cqw'),
       endBrandLeft: resolve<string>('endBrandLeft', '1.75cqw'),
-      sideNavWidth: resolve<string>('sideNavWidth', '5.2cqw'),
-      sideNavNumberSize: resolve<string>('sideNavNumberSize', '1.65cqw'),
-      sideNavRangeTop: resolve<string>('sideNavRangeTop', '22%'),
-      sideNavRangeBottom: resolve<string>('sideNavRangeBottom', '22%'),
-      sideNavItemWidth: resolve<string>('sideNavItemWidth', '3.4cqw'),
-      sideNavItemHeight: resolve<string>('sideNavItemHeight', '2.6cqw'),
-      statusBarHeight: resolve<string>('statusBarHeight', '3.15cqw'),
-      statusBarGap: resolve<string>('statusBarGap', '0.28cqw'),
-      statusBarPadding: resolve<string>('statusBarPadding', '0.28cqw 0.28cqw 0'),
-      statusBarColumns: resolve<string>('statusBarColumns', 'minmax(0, 1.15fr) minmax(0, 1fr) max-content max-content'),
-      statusItemPaddingX: resolve<string>('statusItemPaddingX', '1.05cqw'),
+      topNavHeight: resolve<string>('topNavHeight', '3.6cqw'),
+      topNavLogoLeft: resolve<string>('topNavLogoLeft', '1.2cqw'),
+      topNavLogoSize: resolve<string>('topNavLogoSize', '2.65cqw'),
+      topNavRangeWidth: resolve<string>('topNavRangeWidth', '82cqw'),
+      topNavRangeCenterX: resolve<string>('topNavRangeCenterX', '55.5%'),
+      topNavGap: resolve<string>('topNavGap', '0.65cqw'),
+      topNavItemWidth: resolve<string>('topNavItemWidth', '3.5cqw'),
+      topNavItemHeight: resolve<string>('topNavItemHeight', '2.35cqw'),
+      topNavActiveWidth: resolve<string>('topNavActiveWidth', '18cqw'),
+      topNavTextSize: resolve<string>('topNavTextSize', '1.2cqw'),
+      topNavTitleGap: resolve<string>('topNavTitleGap', '0.8cqw'),
+      topNavProgressColor: resolve<string>('topNavProgressColor', 'color-mix(in srgb, var(--bupt-primary) 24%, white)'),
+      statusBarHeight: resolve<string>('statusBarHeight', '1.65cqw'),
       statusTextSize: resolve<string>('statusTextSize', '1.05cqw'),
       statusTextColor: resolve<string>('statusTextColor', resolve<string>('ink700', '#3c3a37')),
-      statusBackground: resolve<string>('statusBackground', resolve<string>('line', '#e5dfd6')),
-      statusGlassBackground: resolve<string>('statusGlassBackground', '#8a181c'),
-      statusGlassTextColor: resolve<string>('statusGlassTextColor', resolve<string>('onPrimary', '#ffffff')),
+      statusBarRight: resolve<string>('statusBarRight', '1.25cqw'),
+      statusBarBottom: resolve<string>('statusBarBottom', '0.35cqw'),
       contentPaddingTop: resolve<string>('contentPaddingTop', '2.8cqw'),
       contentPaddingRight: resolve<string>('contentPaddingRight', '4.8cqw'),
       contentPaddingBottom: resolve<string>('contentPaddingBottom', '4.25cqw'),
@@ -381,22 +383,23 @@ export function useBuptTheme(props: Readonly<BuptThemeProps>) {
       '--bupt-glass-shadow-opacity': String(value.glassShadowOpacity),
       '--bupt-glass-gradient-angle': value.glassGradientAngle,
       '--bupt-background-opacity': String(value.backgroundOpacity),
-      '--bupt-side-nav-width': value.sideNavWidth,
-      '--bupt-side-nav-number-size': value.sideNavNumberSize,
-      '--bupt-side-nav-range-top': value.sideNavRangeTop,
-      '--bupt-side-nav-range-bottom': value.sideNavRangeBottom,
-      '--bupt-side-nav-item-width': value.sideNavItemWidth,
-      '--bupt-side-nav-item-height': value.sideNavItemHeight,
+      '--bupt-top-nav-height': value.topNavHeight,
+      '--bupt-top-nav-logo-left': value.topNavLogoLeft,
+      '--bupt-top-nav-logo-size': value.topNavLogoSize,
+      '--bupt-top-nav-range-width': value.topNavRangeWidth,
+      '--bupt-top-nav-range-center-x': value.topNavRangeCenterX,
+      '--bupt-top-nav-gap': value.topNavGap,
+      '--bupt-top-nav-item-width': value.topNavItemWidth,
+      '--bupt-top-nav-item-height': value.topNavItemHeight,
+      '--bupt-top-nav-active-width': value.topNavActiveWidth,
+      '--bupt-top-nav-text-size': value.topNavTextSize,
+      '--bupt-top-nav-title-gap': value.topNavTitleGap,
+      '--bupt-top-nav-progress-color': value.topNavProgressColor,
       '--bupt-status-bar-height': value.statusBarHeight,
-      '--bupt-status-bar-gap': value.statusBarGap,
-      '--bupt-status-bar-padding': value.statusBarPadding,
-      '--bupt-status-bar-columns': value.statusBarColumns,
-      '--bupt-status-item-padding-x': value.statusItemPaddingX,
       '--bupt-status-text-size': value.statusTextSize,
       '--bupt-status-text-color': value.statusTextColor,
-      '--bupt-status-background': value.statusBackground,
-      '--bupt-status-glass-background': value.statusGlassBackground,
-      '--bupt-status-glass-text-color': value.statusGlassTextColor,
+      '--bupt-status-bar-right': value.statusBarRight,
+      '--bupt-status-bar-bottom': value.statusBarBottom,
       '--bupt-content-padding-top': value.contentPaddingTop,
       '--bupt-content-padding-right': value.contentPaddingRight,
       '--bupt-content-padding-bottom': value.contentPaddingBottom,
@@ -485,10 +488,64 @@ export function useBuptTheme(props: Readonly<BuptThemeProps>) {
     return targets
   })
 
+  async function goToSection(index: number) {
+    const target = sectionTargets.value[index]
+    const nav = unref($nav)
+    if (target !== undefined && nav?.go)
+      await nav.go(target)
+  }
+
+  const sectionProgress = computed(() => {
+    const nav = unref($nav)
+    const slides = nav?.slides ? unref(nav.slides) : []
+    const targets = sectionTargets.value
+    const currentIndex = theme.value.activeSection - 1
+    const startPage = targets[currentIndex]
+
+    if (startPage === undefined)
+      return 0
+
+    let nextStartPage: number | undefined
+    for (let index = currentIndex + 1; index < targets.length; index += 1) {
+      if (targets[index] !== undefined) {
+        nextStartPage = targets[index]
+        break
+      }
+    }
+
+    const endPage = (nextStartPage ?? slides.length + 1) - 1
+    const contentPages = slides
+      .filter((slide) => {
+        const pageNumber = Number(slide.no)
+        const frontmatter = slide?.meta?.slide?.frontmatter as ThemeRecord | undefined
+        const layout = String(frontmatter?.layout ?? 'default')
+        return pageNumber >= startPage
+          && pageNumber <= endPage
+          && layout !== 'cover'
+          && layout !== 'toc'
+          && layout !== 'end'
+      })
+      .map(slide => Number(slide.no))
+
+    if (contentPages.length === 0)
+      return 0
+    if (contentPages.length === 1)
+      return 1
+
+    const currentPage = Number(unref($page))
+    const currentPosition = contentPages.indexOf(currentPage)
+    if (currentPosition < 0)
+      return currentPage < contentPages[0] ? 0 : 1
+
+    return currentPosition / (contentPages.length - 1)
+  })
+
   return {
     theme,
     cssVars,
     chapterState,
     sectionTargets,
+    goToSection,
+    sectionProgress,
   }
 }
