@@ -128,7 +128,7 @@
 .bupt2024-layout th,
 .bupt2024-layout td {
   padding: 0.45em 0.7em;
-  border: 1px solid var(--bupt-line);
+  border: 1px solid var(--bupt-primary);
   text-align: left;
 }
 

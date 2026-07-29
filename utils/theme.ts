@@ -83,6 +83,11 @@ export interface BuptThemeProps {
   endBrandBottom?: string
   endBrandLeft?: string
   sideNavWidth?: string
+  sideNavNumberSize?: string
+  sideNavRangeTop?: string
+  sideNavRangeBottom?: string
+  sideNavItemWidth?: string
+  sideNavItemHeight?: string
   statusBarHeight?: string
   statusBarGap?: string
   statusBarPadding?: string
@@ -91,11 +96,14 @@ export interface BuptThemeProps {
   statusTextSize?: string
   statusTextColor?: string
   statusBackground?: string
+  statusGlassBackground?: string
+  statusGlassTextColor?: string
   contentPaddingTop?: string
   contentPaddingRight?: string
   contentPaddingBottom?: string
   contentPaddingLeft?: string
   contentMaxWidth?: string
+  mermaidBackground?: string
   columnRatio?: string
   columnGap?: string
   columnAlign?: string
@@ -295,6 +303,11 @@ export function useBuptTheme(props: Readonly<BuptThemeProps>) {
       endBrandBottom: resolve<string>('endBrandBottom', '1.55cqw'),
       endBrandLeft: resolve<string>('endBrandLeft', '1.75cqw'),
       sideNavWidth: resolve<string>('sideNavWidth', '5.2cqw'),
+      sideNavNumberSize: resolve<string>('sideNavNumberSize', '1.65cqw'),
+      sideNavRangeTop: resolve<string>('sideNavRangeTop', '22%'),
+      sideNavRangeBottom: resolve<string>('sideNavRangeBottom', '22%'),
+      sideNavItemWidth: resolve<string>('sideNavItemWidth', '3.4cqw'),
+      sideNavItemHeight: resolve<string>('sideNavItemHeight', '2.6cqw'),
       statusBarHeight: resolve<string>('statusBarHeight', '3.15cqw'),
       statusBarGap: resolve<string>('statusBarGap', '0.28cqw'),
       statusBarPadding: resolve<string>('statusBarPadding', '0.28cqw 0.28cqw 0'),
@@ -303,11 +316,14 @@ export function useBuptTheme(props: Readonly<BuptThemeProps>) {
       statusTextSize: resolve<string>('statusTextSize', '1.05cqw'),
       statusTextColor: resolve<string>('statusTextColor', resolve<string>('ink700', '#3c3a37')),
       statusBackground: resolve<string>('statusBackground', resolve<string>('line', '#e5dfd6')),
+      statusGlassBackground: resolve<string>('statusGlassBackground', '#8a181c'),
+      statusGlassTextColor: resolve<string>('statusGlassTextColor', resolve<string>('onPrimary', '#ffffff')),
       contentPaddingTop: resolve<string>('contentPaddingTop', '2.8cqw'),
       contentPaddingRight: resolve<string>('contentPaddingRight', '4.8cqw'),
       contentPaddingBottom: resolve<string>('contentPaddingBottom', '4.25cqw'),
       contentPaddingLeft: resolve<string>('contentPaddingLeft', '4.8cqw'),
       contentMaxWidth: resolve<string>('contentMaxWidth', '100%'),
+      mermaidBackground: resolve<string>('mermaidBackground', 'var(--slidev-code-background)'),
       columnRatio: resolve<string>('columnRatio', '1fr 1fr'),
       columnGap: resolve<string>('columnGap', '3cqw'),
       columnAlign: resolve<string>('columnAlign', 'start'),
@@ -366,6 +382,11 @@ export function useBuptTheme(props: Readonly<BuptThemeProps>) {
       '--bupt-glass-gradient-angle': value.glassGradientAngle,
       '--bupt-background-opacity': String(value.backgroundOpacity),
       '--bupt-side-nav-width': value.sideNavWidth,
+      '--bupt-side-nav-number-size': value.sideNavNumberSize,
+      '--bupt-side-nav-range-top': value.sideNavRangeTop,
+      '--bupt-side-nav-range-bottom': value.sideNavRangeBottom,
+      '--bupt-side-nav-item-width': value.sideNavItemWidth,
+      '--bupt-side-nav-item-height': value.sideNavItemHeight,
       '--bupt-status-bar-height': value.statusBarHeight,
       '--bupt-status-bar-gap': value.statusBarGap,
       '--bupt-status-bar-padding': value.statusBarPadding,
@@ -374,11 +395,14 @@ export function useBuptTheme(props: Readonly<BuptThemeProps>) {
       '--bupt-status-text-size': value.statusTextSize,
       '--bupt-status-text-color': value.statusTextColor,
       '--bupt-status-background': value.statusBackground,
+      '--bupt-status-glass-background': value.statusGlassBackground,
+      '--bupt-status-glass-text-color': value.statusGlassTextColor,
       '--bupt-content-padding-top': value.contentPaddingTop,
       '--bupt-content-padding-right': value.contentPaddingRight,
       '--bupt-content-padding-bottom': value.contentPaddingBottom,
       '--bupt-content-padding-left': value.contentPaddingLeft,
       '--bupt-content-max-width': value.contentMaxWidth,
+      '--bupt-mermaid-background': value.mermaidBackground,
       '--bupt-column-ratio': value.columnRatio,
       '--bupt-column-gap': value.columnGap,
       '--bupt-column-align': value.columnAlign,
@@ -428,9 +452,43 @@ export function useBuptTheme(props: Readonly<BuptThemeProps>) {
     return 'upcoming'
   }
 
+  const sectionTargets = computed<(number | undefined)[]>(() => {
+    const nav = unref($nav)
+    const slides = nav?.slides ? unref(nav.slides) : []
+    const sections = theme.value.sections
+    const targets = Array<number | undefined>(sections.length).fill(undefined)
+
+    for (const slide of slides) {
+      const frontmatter = slide?.meta?.slide?.frontmatter as ThemeRecord | undefined
+      if (!frontmatter)
+        continue
+
+      let targetIndex = -1
+      if (hasValue(frontmatter, 'section'))
+        targetIndex = sections.findIndex(item => item === String(frontmatter.section))
+
+      if (targetIndex < 0 && hasValue(frontmatter, 'activeSection')) {
+        const rawActive = Number(frontmatter.activeSection)
+        if (Number.isFinite(rawActive))
+          targetIndex = Math.trunc(rawActive) - 1
+      }
+
+      if (
+        targetIndex >= 0
+        && targetIndex < sections.length
+        && targets[targetIndex] === undefined
+      ) {
+        targets[targetIndex] = Number(slide.no)
+      }
+    }
+
+    return targets
+  })
+
   return {
     theme,
     cssVars,
     chapterState,
+    sectionTargets,
   }
 }

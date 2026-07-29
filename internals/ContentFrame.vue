@@ -10,10 +10,17 @@ const props = withDefaults(defineProps<{
   layoutClass: '',
 })
 
-const { theme, cssVars, chapterState } = useBuptTheme(props.themeProps)
-const { $page } = useSlideContext()
+const { theme, cssVars, chapterState, sectionTargets } = useBuptTheme(props.themeProps)
+const { $page, $nav } = useSlideContext()
 const sectionNumbers = ['一', '二', '三', '四', '五', '六']
 const displayPageNumber = computed(() => String(unref($page)).padStart(2, '0'))
+
+async function goToSection(index: number) {
+  const target = sectionTargets.value[index]
+  const nav = unref($nav)
+  if (target !== undefined && nav?.go)
+    await nav.go(target)
+}
 </script>
 
 <template>
@@ -44,11 +51,22 @@ const displayPageNumber = computed(() => String(unref($page)).padStart(2, '0'))
           v-for="(item, index) in theme.sections"
           :key="`${index}-${item}`"
           :class="`is-${chapterState(index)}`"
-          :title="item"
-          :aria-label="`第 ${index + 1} 章：${item}`"
-          :aria-current="chapterState(index) === 'current' ? 'step' : undefined"
         >
-          {{ sectionNumbers[index] }}
+          <button
+            type="button"
+            :disabled="sectionTargets[index] === undefined"
+            :title="sectionTargets[index] === undefined
+              ? `${item}：未指定起始页`
+              : `${item}：跳转到第 ${sectionTargets[index]} 页`"
+            :aria-label="sectionTargets[index] === undefined
+              ? `第 ${index + 1} 章：${item}，未指定起始页`
+              : `跳转到第 ${index + 1} 章：${item}，第 ${sectionTargets[index]} 页`"
+            :aria-current="chapterState(index) === 'current' ? 'step' : undefined"
+            @mousedown.stop
+            @click.stop="goToSection(index)"
+          >
+            {{ sectionNumbers[index] }}
+          </button>
         </li>
       </ol>
     </nav>

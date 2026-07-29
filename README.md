@@ -150,7 +150,9 @@ activeSection: 3
 
 如果当前页同时设置两个参数，能够匹配 `sections` 的 `section` 优先。当前页如果两个参数都没写，主题会向前查找最近一页明确设置的章节并自动继承；封面、目录或其他未设置章节的页面不会打断继承。直接跳页、演讲者模式和导出时也按幻灯片顺序计算，不依赖实际播放历史。若此前没有任何页面设置章节，则使用全局 `themeConfig` 中的值，最后回退到主题默认值 `1`。
 
-左侧导航自动显示中文数字“一”至“六”，已讲、当前和未讲章节与目录页使用同一套状态层级。底栏第二段固定显示解析后的当前章节标题。主题最多显示六章。
+左侧导航自动显示中文数字“一”至“六”，已讲、当前和未讲章节与目录页使用同一套状态层级。数字位于 `sideNavRangeTop` 到 `sideNavRangeBottom` 之间，并在该范围内均匀分布；默认上下范围相同，因此整组数字的垂直中点与页面中点一致。字号和按钮尺寸也可以单独调整。
+
+每个数字都是可点击按钮。主题会查找该章节第一次显式设置有效 `section` 或 `activeSection` 的页面，并调用 Slidev 原生导航跳转；这在普通播放、演讲者模式和路由模式下都会保持正确路径。若某章从未显式指定起始页，对应数字仍会显示，但按钮不可点击。底栏第二段固定显示解析后的当前章节标题。主题最多显示六章。
 
 ```yaml
 ---
@@ -363,6 +365,11 @@ layout: end
 | `endBrandBottom` | `1.55cqw` |
 | `endBrandLeft` | `1.75cqw` |
 | `sideNavWidth` | `5.2cqw` |
+| `sideNavNumberSize` | `1.65cqw` |
+| `sideNavRangeTop` | `22%` |
+| `sideNavRangeBottom` | `22%` |
+| `sideNavItemWidth` | `3.4cqw` |
+| `sideNavItemHeight` | `2.6cqw` |
 | `statusBarHeight` | `3.15cqw` |
 | `statusBarGap` | `0.28cqw` |
 | `statusBarPadding` | `0.28cqw 0.28cqw 0` |
@@ -371,11 +378,14 @@ layout: end
 | `statusTextSize` | `1.05cqw` |
 | `statusTextColor` | `ink700` |
 | `statusBackground` | `line`（`#e5dfd6`） |
+| `statusGlassBackground` | `#8a181c`，`glass` 模式下四个状态块的玻璃底色；透明度与页面蒙层共用参数，但状态块不显示高光渐变 |
+| `statusGlassTextColor` | `onPrimary`（`#ffffff`），`glass` 模式下的状态栏文字色 |
 | `contentPaddingTop` | `2.8cqw` |
 | `contentPaddingRight` | `4.8cqw` |
 | `contentPaddingBottom` | `4.25cqw` |
 | `contentPaddingLeft` | `4.8cqw` |
 | `contentMaxWidth` | `100%` |
+| `mermaidBackground` | `var(--slidev-code-background)`，Mermaid 图表容器底色，默认与代码块一致 |
 | `columnRatio` | `1fr 1fr` |
 | `columnGap` | `3cqw` |
 | `columnAlign` | `start` |
